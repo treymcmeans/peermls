@@ -1,0 +1,6 @@
+MLS #,Address,City,State,Zip,List Price,Beds,Baths,Sq Ft,Year Built,Status,Property Type,Listing Agent,Listing Office,Close Price,Close Date,Description
+GA-10001,123 Peachtree St NE,Atlanta,GA,30309,"$425,000",3,2,1850,2005,Active,Residential,Sarah Johnson,Peachtree Realty,,,"Updated kitchen with granite counters. Close to Piedmont Park."
+GA-10002,456 Ponce de Leon Ave,Decatur,GA,30030,"$375,000",4,3,2200,1998,Active,Residential,Mike Williams,Peachtree Realty,,,"Spacious colonial on a quiet cul-de-sac. New roof in 2024."
+GA-10003,789 Roswell Rd,Sandy Springs,GA,30328,"$550,000",4,3,2800,2010,Pending,Residential,Sarah Johnson,Peachtree Realty,,,"Modern open floor plan. Chef's kitchen. Finished basement."
+GA-10004,321 Highland Ave,Atlanta,GA,30312,"$310,000",2,2,1200,1940,Sold,Residential,Mike Williams,Peachtree Realty,"$305,000",2026-03-15,"Historic bungalow in Inman Park. Original hardwood floors."
+GA-10005,654 Mt Vernon Hwy,Dunwoody,GA,30338,"$625,000",5,4,3400,2015,Active,Residential,Sarah Johnson,Peachtree Realty,,,"Executive home with pool. Top-rated school district."
