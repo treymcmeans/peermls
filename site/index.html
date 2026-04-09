@@ -253,28 +253,8 @@
         </div>
       </div>
 
-      <div class="diagram">
-        <pre>
-  Brokerage A          Brokerage B          Brokerage C
-  +-----------+        +-----------+        +-----------+
-  |  Node A   |&lt;------&gt;|  Node B   |&lt;------&gt;|  Node C   |
-  | (your     |        | (their    |        | (their    |
-  |  listings)|        |  listings)|        |  listings)|
-  +-----------+        +-----------+        +-----------+
-       |                     |                     |
-       +---------------------+---------------------+
-                             |
-                     +---------------+
-                     |  Aggregator   |     Anyone can
-                     | (full network |     query this
-                     |    search)    |
-                     +---------------+
-                             |
-              +--------------+--------------+
-              |              |              |
-         Consumer       CMA Tool       AI Agent
-          Apps          Portals       Showings
-        </pre>
+      <div style="max-width: 800px; margin: 0 auto 48px;">
+        <img src="diagram.svg" alt="PeerMLS Architecture: Brokerages run nodes, nodes federate, aggregator provides single query point for consumer apps, CMA tools, portals, AI agents, and showing schedulers" style="width: 100%; height: auto;">
       </div>
     </div>
   </section>
