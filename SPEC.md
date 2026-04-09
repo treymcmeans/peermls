@@ -307,15 +307,84 @@ The MLS bundled listings, showings, lockboxes, compensation, compliance, and ven
 
 PeerMLS unbundles this. The protocol handles listing data. Everything else is a tool that reads from and writes to the open network. If you can call an API, you can build on PeerMLS. No vendor agreement. No board approval. No procurement cycle.
 
+### Vendor Authorization
+
+The network does not approve vendors. There is no central vendor registry, no board approval, no procurement process. Each brokerage decides which tools can access their node. The brokerage authorizes the vendor, not the network.
+
+PeerMLS uses OAuth2 for vendor authorization, following the model established by the AT Protocol (Bluesky). Each node runs its own OAuth2 authorization server. Vendors discover the node's auth endpoint, request scoped access, and the brokerage grants or denies.
+
+#### How It Works
+
+**1. Vendor identifies itself.** The vendor hosts a client metadata document at a stable URL describing their application:
+
+```
+GET https://showingapp.com/.well-known/peermls-client.json
+
+{
+  "client_id": "https://showingapp.com/.well-known/peermls-client.json",
+  "client_name": "ShowingApp",
+  "redirect_uris": ["https://showingapp.com/callback"],
+  "scope": "listings:read showings:write",
+  "client_uri": "https://showingapp.com",
+  "contacts": ["support@showingapp.com"]
+}
+```
+
+The vendor's identity is their URL. Any node can verify the vendor by fetching this document. No pre-registration needed.
+
+**2. Node publishes its auth endpoint.** Each node exposes OAuth2 metadata at a well-known URL:
+
+```
+GET https://node.smithrealty.com/.well-known/oauth-authorization-server
+
+{
+  "issuer": "https://node.smithrealty.com",
+  "authorization_endpoint": "https://node.smithrealty.com/oauth/authorize",
+  "token_endpoint": "https://node.smithrealty.com/oauth/token",
+  "scopes_supported": ["listings:read", "listings:write", "network:read", "flags:write"]
+}
+```
+
+**3. Brokerage grants access.** The vendor's app redirects the brokerage user to their node's consent screen. The screen shows which scopes the app is requesting. The brokerage approves or denies. On approval, the app receives a scoped access token.
+
+**4. Token works against that node.** The vendor uses the token to call the brokerage's API with only the permissions granted. The vendor repeats this flow for each brokerage they serve. Same integration pattern, different node.
+
+#### Scopes
+
+| Scope | Description |
+|-------|-------------|
+| `listings:read` | Read active and sold listings (public-tier fields) |
+| `listings:write` | Create and update listings |
+| `network:read` | Read network-tier fields (compensation, agent contact, private remarks) |
+| `flags:read` | Read data accuracy flags |
+| `flags:write` | Flag listings for inaccurate data |
+| `stats:read` | Read node and network statistics |
+
+Brokerages configure which scopes they will grant to which vendors. A CMA tool might get `listings:read` and `stats:read`. A transaction manager might get `listings:read` and `listings:write`. A showing coordinator might get `listings:read` and `network:read`.
+
+#### No Central Vendor Registry Required
+
+Any vendor can build on PeerMLS by hosting a client metadata document and running the OAuth flow against any node. No permission from PeerMLS, the foundation, or any other brokerage is needed. The vendor needs permission only from the brokerages they serve.
+
+This follows the email model. Gmail does not approve which apps can connect to your inbox. You authorize apps yourself. PeerMLS works the same way.
+
+#### Optional Vendor Directory
+
+PeerMLS may operate an open vendor directory where vendors publish their client metadata URL and verify their domain. The directory attests identity ("this is really ShowingApp at showingapp.com"), not quality. Any vendor can list themselves. Brokerages can configure their node to auto-trust directory-listed vendors or require manual approval for unlisted ones. The directory is a convenience, not a requirement.
+
+#### Current Implementation
+
+The reference implementation uses API key authentication (`X-API-Key` header) as a simplified version of this model. The full OAuth2 flow described above is the target for production deployments. The API key model works identically in terms of access control — writes require a key, reads are open — without the multi-node discovery and consent flow.
+
 ### How Tools Connect
 
 Any tool can interact with the network at three levels:
 
-**Read from any node or aggregator** — public listing data is open. A showing scheduler, CMA tool, or consumer app queries the API the same way any other client does.
+**Read from any node or aggregator** — public listing data is open. A showing scheduler, CMA tool, or consumer app queries the API the same way any other client does. No authentication required for public-tier fields.
 
-**Read network-tier data with attestation** — tools that serve verified agents present an attestation to access network-visible fields (compensation, agent contact info, private remarks). This is how an agent-facing CRM or showing coordinator gets the data it needs.
+**Read network-tier data with authorization** — tools that serve verified agents request the `network:read` scope via OAuth. The brokerage grants access. The tool receives network-visible fields (compensation, agent contact info, private remarks).
 
-**Write through a brokerage node** — tools that create or update listings (transaction management, listing input platforms) integrate with a specific brokerage's node via its broker API.
+**Write through a brokerage node** — tools that create or update listings request the `listings:write` scope via OAuth. The brokerage grants access. The tool operates on behalf of the brokerage with only the permissions granted.
 
 ### Tools the Network Enables
 
