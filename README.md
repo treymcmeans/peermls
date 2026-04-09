@@ -53,6 +53,8 @@ PeerMLS uses the RESO Data Dictionary. If your software reads MLS data today, it
 
 No data licensing agreement, no vendor procurement process, no board approval. If you can call an API, you can build on PeerMLS.
 
+Each brokerage decides which tools can access their node and what they can do. A showing coordinator gets read access to active listings. A transaction manager gets write access to update statuses. A CMA tool gets read access to sold comps. The brokerage grants access, not the network. No central vendor registry controls who can build on PeerMLS.
+
 This means better tools, faster. Showing schedulers, CMA platforms, offer management, transaction coordination, AI assistants, consumer search — all built by competing companies on an open data layer, instead of gated behind vendor agreements.
 
 ## For Agents
